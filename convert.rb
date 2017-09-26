@@ -3,8 +3,7 @@ require "nokogiri"
 originals = Dir.entries("original")
 tcxs = Dir.entries("tcx")
 
-read = originals - tcxs
-
+read = originals - tcxs.map{|f| f.gsub(/.tcx/, ".CSV")}
 @names = ["Time","Distance","Speed_Avg","Watts_Avg","HR_Avg","RPM_Avg","Speed_Max","Watts_Max","HR_Max","RPM_Max","KCal","KJ"]
 
 
