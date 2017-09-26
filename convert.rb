@@ -1,4 +1,3 @@
-require "awesome_print"
 require "nokogiri" 
 
 originals = Dir.entries("original")
@@ -58,8 +57,20 @@ end
 def read_file(file_name)
 	data = []
 	final = {}
-	start_time = File.ctime("original/"+file_name)
-	ap start_time
+	puts "Enter Date of your ride 'dd/mm/yyyy'"
+	date = gets.chomp
+	puts "Enter Start time of your ride 'hh:mm'"
+	time = gets.chomp
+	date = date.split("/")
+	time = time.split(":")
+	begin
+		start_time = Time.new(date[2], date[1], date[0], time[0], time[1])
+	rescue
+		puts "You entered the wrong date/time, your ride start will be set at the date-time of your file creation date."
+		start_time = nil
+	end
+
+	start_time = File.ctime("original/"+file_name) unless start_time
 	File.open("original/"+file_name).each do |line|
 		if line[0].match(/\d/)
 			data << line.split(",")
@@ -72,6 +83,7 @@ def read_file(file_name)
 	tcx_file = "tcx/" + file_name.split(".")[0] + ".tcx"
 
 	File.open(tcx_file, 'w') { |file| file.write(xml.to_xml) }
+	puts "Your ride is ready at STAGES/tcx/#{tcx_file}"
 end
 def time_in_seconds(time)
 	time.split(':').map { |a| a.to_i }.inject(0) { |a, b| a * 60 + b}
